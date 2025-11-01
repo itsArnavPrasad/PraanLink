@@ -63,7 +63,10 @@ class ConversationSummary(BaseModel):
     sleep_quality: Optional[str] = None
     energy_level: Optional[str] = None
     concerns: Optional[str] = None
-    summary_notes: Optional[str] = None
+    summary: Optional[str] = None
+    ai_insights: List[str] = []
+    overall_score: Optional[str] = None
+
 
 
 # ---------- Final aggregated medical report ----------
