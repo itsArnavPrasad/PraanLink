@@ -5,13 +5,22 @@ from db.database import Base
 
 class CheckIn(Base):
     __tablename__ = "checkins"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    recording_path = Column(String, nullable=False)
-    recording_transcript = Column(JSON, nullable=True)
-    summary = Column(Text, nullable=True)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
+    id = Column(Integer, primary_key=True, index=True)
+    audio_path = Column(String, nullable=False)  # Path to the uploaded audio file
+    transcript = Column(JSON, nullable=True)     # Full transcription (possibly diarized)
+    summary = Column(Text, nullable=True)        # AI-generated summary or insight text
+
+    # AI-analyzed metadata fields
+    mood = Column(String, nullable=True)
+    symptoms = Column(JSON, nullable=True)            # List of detected symptoms
+    medications_taken = Column(JSON, nullable=True)   # List of medications mentioned
+    sleep_quality = Column(String, nullable=True)
+    energy_level = Column(String, nullable=True)
+    concerns = Column(JSON, nullable=True)            # List of user concerns or issues
+    ai_insights = Column(Text, nullable=True)         # AI’s overall interpretation or suggestions
+
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
 class Prescription(Base):
     __tablename__ = "prescriptions"
