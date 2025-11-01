@@ -1,0 +1,143 @@
+{
+  "segments": [
+    {
+      "start": 1.229,
+      "end": 1.89,
+      "text": " Hello.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 6.437,
+      "end": 6.898,
+      "text": "Hi there.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 7.198,
+      "end": 8.921,
+      "text": "How has your week been, health-wise?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 9.762,
+      "end": 12.106,
+      "text": "Anything in particular you'd like to discuss today?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 13.989,
+      "end": 14.53,
+      "text": "Nothing.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 19.397,
+      "end": 19.778,
+      "text": "Okay.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 19.938,
+      "end": 24.826,
+      "text": "Has there been anything at all that you've noticed about your physical or mental well-being this week?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 25.126,
+      "end": 29.413,
+      "text": "Maybe any changes in your mood, sleep, energy levels, or anything else?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 29.933,
+      "end": 31.816,
+      "text": " My hand is itching continuously.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 38.286,
+      "end": 38.627,
+      "text": "I see.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 38.947,
+      "end": 41.171,
+      "text": "You mentioned your hand is itching continuously.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 41.231,
+      "end": 43.194,
+      "text": "That must be quite irritating.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 43.495,
+      "end": 45.838,
+      "text": "Is there a specific area of your hand that's itching?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 46.519,
+      "end": 47.321,
+      "text": "Or is it all over?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 48.503,
+      "end": 49.825,
+      "text": "Just between my fingers.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 50.105,
+      "end": 51.908,
+      "text": "And I also have a cold.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 57.473,
+      "end": 60.316,
+      "text": " Okay, itching between your fingers and a cold.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 61.017,
+      "end": 61.738,
+      "text": "That's good to know.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 61.918,
+      "end": 64.461,
+      "text": "I'm sorry to hear that you're dealing with both of those things.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 64.741,
+      "end": 66.182,
+      "text": "Let's start with the itching.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 66.623,
+      "end": 72.589,
+      "text": "Since it's between your fingers, I'm wondering if we should check your user history for any past skin conditions or allergies.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 73.33,
+      "end": 74.451,
+      "text": "Would you like me to do that?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 75.613,
+      "end": 80.578,
+      "text": "Okay.",
+      "speaker": "SPEAKER_00"
+    }
+  ],
+  "language": "en"
+}

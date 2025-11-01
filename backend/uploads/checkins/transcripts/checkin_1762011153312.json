@@ -1,0 +1,53 @@
+{
+  "segments": [
+    {
+      "start": 6.832,
+      "end": 7.273,
+      "text": " Hello.",
+      "speaker": "SPEAKER_01"
+    },
+    {
+      "start": 13.208,
+      "end": 13.689,
+      "text": "Hi there.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 13.99,
+      "end": 15.614,
+      "text": "How have you been feeling this week?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 15.634,
+      "end": 16.195,
+      "text": "Health wise?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 16.777,
+      "end": 18.501,
+      "text": "Anything in particular on your mind?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 21.609,
+      "end": 22.09,
+      "text": "I don't know.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 29.039,
+      "end": 31.249,
+      "text": " No worries, sometimes it's hard to put your finger on it.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 32.013,
+      "end": 38.121,
+      "text": "Have you noticed any changes in your physical health, like any new aches, pains, or anything unusual?",
+      "speaker": "SPEAKER_00"
+    }
+  ],
+  "language": "en"
+}

@@ -1,0 +1,65 @@
+{
+  "segments": [
+    {
+      "start": 0.689,
+      "end": 1.67,
+      "text": " Yo, yo, what's good?",
+      "speaker": "SPEAKER_01"
+    },
+    {
+      "start": 6.516,
+      "end": 6.816,
+      "text": "Hey there.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 7.437,
+      "end": 8.939,
+      "text": "I'm your personal insurance advisor.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 9.699,
+      "end": 11.582,
+      "text": "I can help you find the perfect insurance plan.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 12.162,
+      "end": 14.966,
+      "text": "To start, do you currently have any health insurance coverage?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 16.347,
+      "end": 16.588,
+      "text": "No.",
+      "speaker": "SPEAKER_01"
+    },
+    {
+      "start": 22.034,
+      "end": 22.334,
+      "text": "Okay.",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 23.315,
+      "end": 29.903,
+      "text": "To help me find the best plan for you, could you tell me a bit about your health situation and what you're looking for in a health insurance plan?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 30.642,
+      "end": 35.386,
+      "text": " For example, are you looking for coverage just for yourself or for your family?",
+      "speaker": "SPEAKER_00"
+    },
+    {
+      "start": 36.813,
+      "end": 42.34,
+      "text": "Are there any specific health concerns or pre-existing conditions I should keep in mind?",
+      "speaker": "SPEAKER_00"
+    }
+  ],
+  "language": "en"
+}
