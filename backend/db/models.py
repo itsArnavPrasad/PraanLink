@@ -1,0 +1,55 @@
+from sqlalchemy import Column, Integer, String, Text, Float, DateTime, JSON
+from sqlalchemy.sql import func
+from db.database import Base
+
+
+class CheckIn(Base):
+    __tablename__ = "checkins"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    recording_path = Column(String, nullable=False)
+    recording_transcript = Column(JSON, nullable=True)
+    summary = Column(Text, nullable=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Prescription(Base):
+    __tablename__ = "prescriptions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    file_path = Column(String, nullable=False)
+    summary = Column(Text, nullable=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Report(Base):
+    __tablename__ = "reports"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    file_path = Column(String, nullable=False)
+    summary = Column(Text, nullable=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Hospital(Base):
+    __tablename__ = "hospitals"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    speciality = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    reviews = Column(Float, nullable=True)
+    contact_info = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+
+
+class Insurance(Base):
+    __tablename__ = "insurances"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    coverage = Column(String, nullable=False)
+    premium = Column(Float, nullable=False)
+    key_features = Column(JSON, nullable=True)
+    provider = Column(String, nullable=False)
+
