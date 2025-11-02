@@ -279,55 +279,6 @@ The person you're talking to is the hospital front desk staff. This is a real, l
           }
         }
       },
-      tools: [
-        {
-          functionDeclarations: [
-            {
-              name: "getMedicalHistory",
-              description: "OPTIONAL RAG TOOL: Access additional patient medical information if needed. You already have the patient's complete medical context pre-loaded in your system instruction, so you typically don't need to call this tool. Only use this if you need to search for very specific information that wasn't included in your pre-loaded context or if you need to refresh/update the medical data during the conversation.",
-              parameters: {
-                type: "object",
-                properties: {
-                  query: {
-                    type: "string",
-                    description: "Natural language query for specific information. Examples: 'specific symptom details', 'detailed lab values', 'medication dosages', etc. Use only if you need information not already in your context.",
-                  },
-                },
-                required: ["query"],
-              },
-            },
-            {
-              name: "sendEmail",
-              description: "MANDATORY: Send the patient's medical report PDF to the hospital email. You MUST call this tool AFTER the hospital confirms they want the medical report sent. Call this AFTER asking for confirmation and BEFORE ending the call. The system will automatically attach PraanLink_Medical_Report.pdf. Include appointment confirmation details in the email body.",
-              parameters: {
-                type: "object",
-                properties: {
-                  to: {
-                    type: "string",
-                    description: "Hospital email address (ask the hospital staff for their email if not provided)",
-                  },
-                  subject: {
-                    type: "string",
-                    description: "Email subject line (e.g., 'Medical Report for Appointment - [Patient Name]')",
-                  },
-                  body: {
-                    type: "string",
-                    description: "Email body with appointment confirmation details, patient information, and appointment date/time",
-                  },
-                  attachments: {
-                    type: "array",
-                    items: {
-                      type: "string"
-                    },
-                    description: "Leave empty or pass ['PraanLink_Medical_Report.pdf'] - the system will automatically attach the medical report PDF",
-                  },
-                },
-                required: ["to", "subject", "body"],
-              },
-            },
-          ],
-        },
-      ],
     };
 
     geminiAPIRef.current = new GeminiLiveAPI(endpoint, true, customSetupConfig);
