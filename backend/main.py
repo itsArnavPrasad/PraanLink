@@ -9,9 +9,10 @@ from marshmallow import ValidationError as MarshmallowValidationError
 import os
 from routers import checkins, prescriptions, reports, hospitals, insurances
 from db.database import init_db, SessionLocal
-from db.models import CheckIn
+from db.models import CheckIn, Prescription, Report
 from utils.transcribe import transcribe_audio
 from utils.summarize import summarize_checkin_text
+from utils.ocr_summary import process_prescription, process_lab_report
 
 app = FastAPI(
     title="PraanLink API",
@@ -31,8 +32,13 @@ app.add_middleware(
 # Create upload directories
 UPLOAD_DIR = "uploads/checkins/audio"
 TRANSCRIPT_DIR = "uploads/checkins/transcripts"
+PRESCRIPTION_DIR = "uploads/prescriptions"
+LAB_REPORT_DIR = "uploads/lab_reports"
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(TRANSCRIPT_DIR, exist_ok=True)
+os.makedirs(PRESCRIPTION_DIR, exist_ok=True)
+os.makedirs(LAB_REPORT_DIR, exist_ok=True)
 
 # Dependency to get DB session
 def get_db():
@@ -97,7 +103,6 @@ async def upload_checkin(
         print("Summarizing check-in transcript...")
         summary = summarize_checkin_text(transcript)
         print("this is the summary: ", summary)
-        # summarize = "check"
         print("Check-in analysis completed")
         
         # Step 3: Save to database using the CheckIn model
@@ -141,6 +146,158 @@ async def upload_checkin(
             }
         )
 
+
+# Upload prescription endpoint
+@app.post("/upload-prescription")
+async def upload_prescription(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Upload and process a prescription image.
+    Performs OCR and extracts structured prescription data.
+    """
+    file_path = os.path.join(PRESCRIPTION_DIR, file.filename)
+    
+    try:
+        # Save the uploaded file
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+        
+        print(f"Processing prescription: {file.filename}")
+        
+        # Process prescription (OCR + Agent)
+        result = process_prescription(file_path)
+        
+        if result.get("status") == "failed":
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Processing failed",
+                    "message": result.get("error", "Unknown error"),
+                }
+            )
+        
+        structured_data = result.get("structured_data", {})
+        doctor_info = structured_data.get("doctor_info", {})
+        patient_info = structured_data.get("patient_info", {})
+        summary = structured_data.get("summary", {})
+        
+        # Save to database
+        prescription = Prescription(
+            file_path=file_path,
+            ocr_text=result.get("ocr_text", ""),
+            doctor_name=doctor_info.get("name"),
+            doctor_qualification=doctor_info.get("qualification"),
+            doctor_registration_number=doctor_info.get("registration_number"),
+            hospital=doctor_info.get("hospital"),
+            doctor_contact_info=doctor_info.get("contact_info"),
+            prescription_date=doctor_info.get("date"),
+            patient_name=patient_info.get("name"),
+            patient_age=patient_info.get("age"),
+            patient_gender=patient_info.get("gender"),
+            medicines=structured_data.get("medicines", []),
+            diagnosis=summary.get("diagnosis"),
+            symptoms=summary.get("symptoms"),
+            advice=summary.get("advice"),
+            follow_up=summary.get("follow_up"),
+            prescription_summary=structured_data.get("prescription_summary"),
+            structured_data=structured_data
+        )
+        
+        db.add(prescription)
+        db.commit()
+        db.refresh(prescription)
+        
+        return {
+            "id": prescription.id,
+            "message": "Prescription processed successfully",
+            "data": structured_data
+        }
+    
+    except Exception as e:
+        print(f"Error processing prescription: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Processing failed",
+                "message": str(e)
+            }
+        )
+
+
+# Upload lab report endpoint (fixed)
+@app.post("/upload-lab-report")
+async def upload_lab_report(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    file_path = os.path.join(LAB_REPORT_DIR, file.filename)
+
+    try:
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+
+        print(f"Processing lab report: {file.filename}")
+        result = process_lab_report(file_path)
+
+        if result.get("status") == "failed":
+            return JSONResponse(
+                status_code=500,
+                content={"error": "Processing failed", "message": result.get("error", "Unknown error")},
+            )
+
+        print("results:", result)
+        structured_data = result.get("structured_data", {})
+
+        # 🔹 Fix: map values properly
+        raw_lab_data = {
+            "report_date": structured_data.get("report_date"),
+            "report_time": structured_data.get("report_time"),
+            "metrics": structured_data.get("metrics", [])
+        }
+
+        # optional AI extensions
+        lab_analysis = result.get("lab_analysis", {})
+        lab_risk_scores = result.get("lab_risk_scores", {})
+        lab_summary = result.get("lab_summary", {})
+
+        # Save to database
+        lab_report = Report(
+            file_path=file_path,
+            ocr_text=result.get("ocr_text", ""),
+            report_date=raw_lab_data.get("report_date"),
+            report_time=raw_lab_data.get("report_time"),
+            raw_lab_data=raw_lab_data,
+            lab_analysis=lab_analysis,
+            lab_risk_scores=lab_risk_scores,
+            overall_health_risk_index=lab_risk_scores.get("overall_health_risk_index"),
+            severity=lab_risk_scores.get("severity"),
+            critical_flags=lab_risk_scores.get("critical_flags", []),
+            lab_summary_overview=lab_summary.get("overview"),
+            key_findings=lab_summary.get("key_findings", []),
+            overall_risk=lab_summary.get("overall_risk"),
+            tone=lab_summary.get("tone"),
+            recommendations=lab_summary.get("recommendations", []),
+            critical_alerts=lab_summary.get("critical_alerts", []),
+            structured_data=structured_data
+        )
+
+        db.add(lab_report)
+        db.commit()
+        db.refresh(lab_report)
+
+        return {
+            "id": lab_report.id,
+            "message": "Lab report processed successfully",
+            "data": structured_data
+        }
+
+    except Exception as e:
+        print(f"Error processing lab report: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Processing failed", "message": str(e)}
+        )
+
+
 # Upload insurance consultation audio endpoint
 @app.post("/upload-insurance-consultation")
 async def upload_insurance_consultation(
@@ -166,9 +323,6 @@ async def upload_insurance_consultation(
         print(f"Transcribing insurance consultation: {file.filename}")
         transcript = transcribe_audio(file_path, output_dir=consultation_transcript_dir)
         
-        # You can add analysis here if needed
-        # analysis = analyze_insurance_consultation(transcript)
-        
         return {
             "message": "Insurance consultation stored successfully",
             "file_path": file_path,
@@ -184,6 +338,7 @@ async def upload_insurance_consultation(
                 "message": str(e)
             }
         )
+
 
 # Error handlers
 @app.exception_handler(404)
