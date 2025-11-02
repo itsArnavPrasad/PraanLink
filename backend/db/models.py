@@ -7,18 +7,18 @@ class CheckIn(Base):
     __tablename__ = "checkins"
 
     id = Column(Integer, primary_key=True, index=True)
-    audio_path = Column(String, nullable=False)  # Path to the uploaded audio file
-    transcript = Column(JSON, nullable=True)     # Full transcription (possibly diarized)
-    summary = Column(Text, nullable=True)        # AI-generated summary or insight text
-
-    # AI-analyzed metadata fields
-    mood = Column(String, nullable=True)
-    symptoms = Column(JSON, nullable=True)            # List of detected symptoms
-    medications_taken = Column(JSON, nullable=True)   # List of medications mentioned
-    sleep_quality = Column(String, nullable=True)
-    energy_level = Column(String, nullable=True)
-    concerns = Column(JSON, nullable=True)            # List of user concerns or issues
-    ai_insights = Column(Text, nullable=True)         # AI’s overall interpretation or suggestions
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    audio_path = Column(String)
+    transcript = Column(JSON) 
+    summary = Column(JSON)     
+    mood = Column(String)
+    symptoms = Column(JSON)    
+    medications_taken = Column(JSON)
+    sleep_quality = Column(String)
+    energy_level = Column(String)
+    concerns = Column(JSON)
+    ai_insights = Column(JSON)
+    overall_score = Column(String)
 
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 

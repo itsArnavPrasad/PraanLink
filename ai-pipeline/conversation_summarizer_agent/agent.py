@@ -13,3 +13,5 @@ conversation_summarizer_agent = LlmAgent(
     output_schema=ConversationSummary,
     output_key="conversation_summary",
 )
+
+root_agent = conversation_summarizer_agent

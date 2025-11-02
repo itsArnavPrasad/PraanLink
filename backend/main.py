@@ -94,22 +94,28 @@ async def upload_checkin(
         
         # Step 2: Analyze the check-in using AI
         print("Summarizing check-in transcript...")
-        summarize = summarize_checkin_text(transcript)
+        summary = summarize_checkin_text(transcript)
+        print("this is the summary: ", summary)
         # summarize = "check"
         print("Check-in analysis completed")
         
         # Step 3: Save to database using the CheckIn model
+        inner_summary = summary.get("summary", {}) if summary else {}
+        print("\n"*3)
+        print(inner_summary)
+
         checkin = CheckIn(
             audio_path=file_path,
-            transcript=transcript,  # Store full transcript with diarization if available
-            summary=summarize.get("summary", ""),
-            mood=summarize.get("mood", ""),
-            symptoms=summarize.get("symptoms", []),
-            medications_taken=summarize.get("medications_taken", []),
-            sleep_quality=summarize.get("sleep_quality", ""),
-            energy_level=summarize.get("energy_level", ""),
-            concerns=summarize.get("concerns", []),
-            ai_insights=summarize.get("insights", "")
+            transcript=transcript,
+            summary=inner_summary.get("summary", ""),
+            mood=inner_summary.get("mood", ""),
+            symptoms=inner_summary.get("symptoms", []),
+            medications_taken=inner_summary.get("medications_taken", []),
+            sleep_quality=inner_summary.get("sleep_quality", ""),
+            energy_level=inner_summary.get("energy_level", ""),
+            concerns=inner_summary.get("concerns", ""),
+            ai_insights=inner_summary.get("ai_insights", []),
+            overall_score=inner_summary.get("overall_score", "")
         )
         
         db.add(checkin)
@@ -120,7 +126,7 @@ async def upload_checkin(
             "id": checkin.id,
             "message": "Check-in stored successfully",
             "transcript": transcript,
-            "analysis": analysis
+            "summary": summary
         }
     
     except Exception as e:
