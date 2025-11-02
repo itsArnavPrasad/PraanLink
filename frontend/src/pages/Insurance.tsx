@@ -70,7 +70,7 @@ export default function Insurance() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [isAISpeaking, setIsAISpeaking] = useState(false);
-  const [recommendedPlans, setRecommendedPlans] = useState<InsurancePlan[]>(insurancePlans);
+  const [recommendedPlans] = useState<InsurancePlan[]>(insurancePlans);
 
   const geminiAPIRef = useRef<any>(null);
   const audioRecorderRef = useRef<any>(null);
@@ -102,60 +102,103 @@ export default function Insurance() {
     const systemInstruction = `You are a knowledgeable and friendly health insurance advisor helping users find the perfect insurance plan for themselves and their families.
 
 YOUR ROLE:
-- You are an expert insurance consultant who understands health insurance products, coverage options, and user needs
-- You help users navigate the complex world of health insurance with patience and clarity
-- You analyze user's health profile, family situation, and financial considerations to recommend the best plans
-- You have access to a comprehensive database of insurance plans and can search through them
+- You are an expert insurance consultant who understands health insurance products and helps people protect their health and financial wellbeing
+- You help users understand the importance of health insurance and guide them to choose the right plan
+- You analyze their age, family situation, health conditions, and budget to recommend the most suitable plan
+- You speak naturally in a warm, trustworthy, and conversational manner
 
-CONVERSATION STYLE:
-- Speak naturally and conversationally in English
-- Be warm, professional, and trustworthy
-- Ask thoughtful questions to understand their needs fully
-- Explain insurance terms in simple language when needed
-- Show genuine interest in finding the right coverage for them
-- Be transparent about costs, coverage, and limitations
+AVAILABLE INSURANCE PLANS:
+You have access to these three insurance plans to recommend:
 
-KEY AREAS TO EXPLORE:
-1. Personal Information:
-   - Age and health status of user and family members
-   - Pre-existing conditions or ongoing treatments
-   - Family size and ages of dependents
-   
-2. Coverage Needs:
-   - Expected medical expenses and hospitalization needs
-   - Preferred coverage amount
-   - Important features (cashless, room rent, pre-post hospitalization, etc.)
-   
-3. Financial Considerations:
-   - Budget for premium payments
-   - Preferred payment frequency (monthly/quarterly/yearly)
-   
-4. Specific Requirements:
-   - Network hospitals preference
-   - Maternity coverage needs
-   - Critical illness coverage
-   - Wellness benefits
+PLAN 1: Star Health - Comprehensive Health Plus
+- Coverage: ₹10 Lakh
+- Premium: ₹15,000/year
+- Best for: Families with higher coverage needs, those wanting premium features
+- Key Features:
+  • Cashless hospitalization across 14,000+ network hospitals
+  • Pre & post hospitalization coverage (60 days pre, 180 days post)
+  • Day-care procedures covered
+  • No room rent limit (can choose any room type)
+  • Maternity coverage (after 2 year waiting period)
+  • Annual health check-ups included
+- Ideal for: Middle to upper middle-class families, those with aging parents, families planning for maternity
+
+PLAN 2: HDFC ERGO - Health Suraksha Gold
+- Coverage: ₹7.5 Lakh
+- Premium: ₹12,500/year
+- Best for: Individuals and small families, those with pre-existing conditions
+- Key Features:
+  • Cashless treatment at 10,000+ hospitals
+  • Annual health check-up for preventive care
+  • Pre-existing diseases covered (after 2-3 year waiting period)
+  • Restore benefit - coverage amount restored if exhausted
+  • Ambulance charges covered
+  • AYUSH treatments covered
+- Ideal for: Young professionals, nuclear families, people with pre-existing conditions like diabetes or hypertension
+
+PLAN 3: ICICI Lombard - Complete Health Insurance
+- Coverage: ₹5 Lakh
+- Premium: ₹9,000/year
+- Best for: Young individuals, budget-conscious buyers, those seeking basic coverage
+- Key Features:
+  • Ambulance charges covered
+  • Day-care treatments for 150+ procedures
+  • Wellness benefits and health coaching
+  • Access to 7,000+ network hospitals
+  • Domiciliary hospitalization for home treatment
+  • Organ donor expenses covered
+- Ideal for: Singles, young couples without kids, those starting their insurance journey, tight budgets
+
+CONVERSATION APPROACH:
+1. Start with a warm greeting and explain you're here to help them find the right health insurance
+2. Emphasize why health insurance is crucial:
+   - Medical costs are rising rapidly in India (15-20% annually)
+   - A single hospitalization can wipe out years of savings
+   - Family protection and financial security
+   - Tax benefits under Section 80D
+   - Cashless treatment reduces stress during emergencies
+
+3. Ask thoughtful questions to understand their needs:
+   - "Tell me about yourself - what's your age and do you have a family?"
+   - "Are there any ongoing health conditions or concerns in your family?"
+   - "How many family members would you like to cover?"
+   - "Do you have elderly parents who need coverage?"
+   - "What's your comfortable budget for annual premium?"
+   - "Are you looking for extensive coverage or basic protection?"
+   - "Any specific concerns like maternity, pre-existing conditions, or critical illness?"
+
+4. Based on their answers, recommend the MOST SUITABLE plan:
+   - For young singles/couples with limited budget → ICICI Lombard (Plan 3)
+   - For families with pre-existing conditions → HDFC ERGO (Plan 2)
+   - For larger families needing comprehensive coverage → Star Health (Plan 1)
+   - For those with aging parents → Star Health or HDFC ERGO
+   - For maternity planning → Star Health (Plan 1)
+
+5. Explain your recommendation clearly:
+   - Why this specific plan suits their situation
+   - What makes it the right choice for their needs
+   - What they should be aware of (waiting periods, exclusions)
+   - How it provides value for their premium
+
+6. Be honest about trade-offs:
+   - Higher coverage means higher premium
+   - Lower premium might mean some limitations
+   - Waiting periods for certain conditions
+   - Network hospital limitations
 
 IMPORTANT GUIDELINES:
-- Start by warmly greeting the user and introducing yourself as their insurance advisor
-- Ask about their current insurance status (if any)
-- Gather information about their health profile and family situation
-- Use searchInsurancePlans to find plans that match their requirements
-- Use searchUserHealth to understand their medical history and current health conditions
-- Use searchUserReports to review their medical reports and prescriptions
-- Provide personalized recommendations with clear explanations
-- Compare plans when asked and explain trade-offs
-- Guide them through the decision-making process step by step
-- Always be honest about what's covered and what's not
-- Never pressure them - let them make informed decisions
+- Always emphasize the importance of health insurance early in the conversation
+- Use real-life examples to illustrate why insurance matters
+- Be empathetic and understanding about budget concerns
+- Never pressure - educate and empower them to make informed decisions
+- Keep explanations simple and avoid insurance jargon
+- Be transparent about what's covered and what's not
+- Recommend ONLY ONE plan as the best fit, but mention alternatives if asked
+- Show genuine care for their wellbeing and financial security
 
-TOOL USAGE:
-- Use searchInsurancePlans when you need to find specific plans based on coverage, premium, features, or providers
-- Use searchUserHealth when you need context about their medical history, check-in summaries, or health conditions
-- Use searchUserReports when you need to review their prescriptions, medical reports, or treatment history
-- Combine information from all tools to provide the most personalized recommendations
+Remember: Your goal is to help them understand why health insurance is essential and guide them to the plan that truly fits their life situation, not just sell them the most expensive option.
 
-Begin by warmly introducing yourself and asking the user about their insurance needs and current situation.`;
+Begin by warmly greeting them and asking about their current insurance status and what brings them here today.`;
 
     const customSetupConfig = {
       model: "models/gemini-2.0-flash-exp",
@@ -169,86 +212,11 @@ Begin by warmly introducing yourself and asking the user about their insurance n
         speech_config: {
           voice_config: {
             prebuilt_voice_config: {
-              voice_name: "Charon" // Professional, trustworthy voice
+              voice_name: "Charon"
             }
           }
         }
-      },
-      tools: [
-        {
-          functionDeclarations: [
-            {
-              name: "searchInsurancePlans",
-              description: "Search the insurance database for plans that match specific criteria. Use this to find plans based on coverage amount, premium range, specific features, provider, or any combination of requirements.",
-              parameters: {
-                type: "object",
-                properties: {
-                  query: {
-                    type: "string",
-                    description: "The search query describing the insurance requirements (e.g., 'family plan under 20000 with maternity coverage', 'individual plan 5 lakh coverage', 'plans with pre-existing disease coverage')",
-                  },
-                  minCoverage: {
-                    type: "number",
-                    description: "Minimum coverage amount in lakhs (optional)",
-                  },
-                  maxPremium: {
-                    type: "number",
-                    description: "Maximum annual premium amount in rupees (optional)",
-                  },
-                },
-                required: ["query"],
-              },
-            },
-            {
-              name: "searchUserHealth",
-              description: "Search the user's health history including past check-in summaries, diagnosed conditions, symptoms, medications, and overall health status. Use this to understand their medical profile.",
-              parameters: {
-                type: "object",
-                properties: {
-                  query: {
-                    type: "string",
-                    description: "What to search for in the user's health history (e.g., 'pre-existing conditions', 'current medications', 'recent health check-ins', 'chronic conditions')",
-                  },
-                },
-                required: ["query"],
-              },
-            },
-            {
-              name: "searchUserReports",
-              description: "Search the user's medical reports, prescriptions, test results, and treatment history. Use this to get detailed medical information.",
-              parameters: {
-                type: "object",
-                properties: {
-                  query: {
-                    type: "string",
-                    description: "What to search for in medical reports (e.g., 'recent prescriptions', 'blood test results', 'specialist reports', 'ongoing treatments')",
-                  },
-                },
-                required: ["query"],
-              },
-            },
-            {
-              name: "updateRecommendedPlans",
-              description: "Update the displayed insurance plans on the screen with specific recommendations. Use this after analyzing user needs to show them the most suitable plans.",
-              parameters: {
-                type: "object",
-                properties: {
-                  planIds: {
-                    type: "array",
-                    items: { type: "number" },
-                    description: "Array of plan IDs to display as recommendations",
-                  },
-                  reason: {
-                    type: "string",
-                    description: "Brief explanation of why these plans are recommended",
-                  },
-                },
-                required: ["planIds", "reason"],
-              },
-            },
-          ],
-        },
-      ],
+      }
     };
 
     geminiAPIRef.current = new GeminiLiveAPI(endpoint, true, customSetupConfig);
@@ -276,87 +244,6 @@ Begin by warmly introducing yourself and asking the user about their insurance n
       console.log('AI interrupted');
       setIsAISpeaking(false);
       audioStreamerRef.current?.stop();
-    };
-
-    geminiAPIRef.current.onToolCall = async (toolCall: any) => {
-      console.log("Tool call received:", toolCall);
-    
-      if (toolCall.name === "searchInsurancePlans") {
-        const { query, minCoverage, maxPremium } = toolCall.arguments;
-        
-        try {
-          const response = await fetch(`${BACKEND_URL}/insurance-search`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query, minCoverage, maxPremium }),
-          });
-      
-          const data = await response.json();
-      
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: data.plans || "No insurance plans found matching these criteria.",
-          });
-        } catch (error) {
-          console.error('Insurance search error:', error);
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: "Unable to search insurance plans at this time.",
-          });
-        }
-      } else if (toolCall.name === "searchUserHealth") {
-        const query = toolCall.arguments.query;
-        
-        try {
-          const response = await fetch(`${BACKEND_URL}/user-health-search`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query }),
-          });
-      
-          const data = await response.json();
-      
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: data.answer || "No health information found.",
-          });
-        } catch (error) {
-          console.error('User health search error:', error);
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: "Unable to search health information at this time.",
-          });
-        }
-      } else if (toolCall.name === "searchUserReports") {
-        const query = toolCall.arguments.query;
-        
-        try {
-          const response = await fetch(`${BACKEND_URL}/user-reports-search`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query }),
-          });
-      
-          const data = await response.json();
-      
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: data.answer || "No medical reports found.",
-          });
-        } catch (error) {
-          console.error('User reports search error:', error);
-          geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-            result: "Unable to search medical reports at this time.",
-          });
-        }
-      } else if (toolCall.name === "updateRecommendedPlans") {
-        const { planIds, reason } = toolCall.arguments;
-        
-        // Update the displayed plans based on AI recommendation
-        const updatedPlans = insurancePlans.filter(plan => planIds.includes(plan.id));
-        setRecommendedPlans(updatedPlans);
-        
-        toast.success(`Plans updated: ${reason}`);
-        
-        geminiAPIRef.current.sendToolResult(toolCall.call_id, {
-          result: `Successfully updated display with ${updatedPlans.length} recommended plans.`,
-        });
-      }
     };
 
     geminiAPIRef.current.onTurnComplete = () => {
@@ -477,7 +364,6 @@ Begin by warmly introducing yourself and asking the user about their insurance n
       if (recordingBlob) {
         toast.loading("Saving conversation...");
         
-        // Upload recording to backend
         const formData = new FormData();
         const fileName = `insurance_consultation_${Date.now()}.wav`;
         formData.append('file', recordingBlob, fileName);
@@ -586,103 +472,94 @@ Begin by warmly introducing yourself and asking the user about their insurance n
         {/* Header */}
         <div className="border-b border-border bg-card px-6 py-5">
           <h2 className="text-xl font-bold text-foreground">
-            {isRecording ? "Analyzing Your Needs..." : "Recommended Plans"}
+            Available Plans
           </h2>
           <p className="text-sm text-muted-foreground">
-            {isRecording 
-              ? "Plans will update based on our conversation"
-              : "Personalized for your health profile"}
+            Talk to our advisor to find the best plan for you
           </p>
         </div>
 
         {/* Plans List */}
         <div className="flex-1 overflow-auto p-6">
-          <AnimatePresence mode="popLayout">
-            <div className="space-y-4">
-              {recommendedPlans.map((plan) => (
-                <motion.div
-                  key={plan.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="p-5 transition-smooth hover:shadow-md">
-                    <div className="space-y-4">
-                      {/* Header */}
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Shield className="h-5 w-5 text-primary" />
-                            <h3 className="text-lg font-semibold text-foreground">
-                              {plan.name}
-                            </h3>
-                          </div>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {plan.provider}
-                          </p>
-                        </div>
-                        <Badge className="bg-primary">
-                          {plan.match}% Match
-                        </Badge>
-                      </div>
-
-                      {/* Coverage & Premium */}
-                      <div className="flex gap-4">
-                        <div className="flex-1 rounded-lg bg-primary-lighter p-3">
-                          <p className="text-xs text-muted-foreground">Coverage</p>
-                          <p className="mt-1 text-lg font-bold text-primary">
-                            {plan.coverage}
-                          </p>
-                        </div>
-                        <div className="flex-1 rounded-lg bg-muted p-3">
-                          <p className="text-xs text-muted-foreground">Premium</p>
-                          <p className="mt-1 text-lg font-bold text-foreground">
-                            {plan.premium}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Features */}
+          <div className="space-y-4">
+            {recommendedPlans.map((plan) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="p-5 transition-smooth hover:shadow-md">
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
                       <div>
-                        <p className="mb-2 text-sm font-medium text-foreground">
-                          Key Features
-                        </p>
-                        <div className="space-y-1.5">
-                          {plan.features.map((feature, idx) => (
-                            <div
-                              key={idx}
-                              className="flex items-start gap-2 text-sm text-muted-foreground"
-                            >
-                              <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                              <span>{feature}</span>
-                            </div>
-                          ))}
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-5 w-5 text-primary" />
+                          <h3 className="text-lg font-semibold text-foreground">
+                            {plan.name}
+                          </h3>
                         </div>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {plan.provider}
+                        </p>
                       </div>
-
-                      {/* Action */}
-                      <Button
-                        className="w-full"
-                        onClick={() => {
-                          toast.success(`Requesting details for ${plan.name}`);
-                        }}
-                      >
-                        Get Quote
-                      </Button>
                     </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </AnimatePresence>
+
+                    {/* Coverage & Premium */}
+                    <div className="flex gap-4">
+                      <div className="flex-1 rounded-lg bg-primary/10 p-3">
+                        <p className="text-xs text-muted-foreground">Coverage</p>
+                        <p className="mt-1 text-lg font-bold text-primary">
+                          {plan.coverage}
+                        </p>
+                      </div>
+                      <div className="flex-1 rounded-lg bg-muted p-3">
+                        <p className="text-xs text-muted-foreground">Premium</p>
+                        <p className="mt-1 text-lg font-bold text-foreground">
+                          {plan.premium}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Features */}
+                    <div>
+                      <p className="mb-2 text-sm font-medium text-foreground">
+                        Key Features
+                      </p>
+                      <div className="space-y-1.5">
+                        {plan.features.map((feature, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2 text-sm text-muted-foreground"
+                          >
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action */}
+                    <Button
+                      className="w-full"
+                      onClick={() => {
+                        toast.success(`Requesting details for ${plan.name}`);
+                      }}
+                    >
+                      Get Quote
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
 
           {/* Info Card */}
           {!isRecording && (
             <Card className="mt-4 bg-muted/50 p-4">
               <div className="flex items-start gap-3">
-                <div className="rounded-lg bg-primary-lighter p-2">
+                <div className="rounded-lg bg-primary/10 p-2">
                   <Users className="h-5 w-5 text-primary" />
                 </div>
                 <div>
@@ -690,7 +567,7 @@ Begin by warmly introducing yourself and asking the user about their insurance n
                     Need Help Choosing?
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Talk to our insurance advisor above. They'll analyze your health profile, family needs, and budget to recommend the perfect plan for you.
+                    Talk to our insurance advisor above. They'll ask about your age, family, health situation, and budget to recommend the perfect plan for you.
                   </p>
                 </div>
               </div>
