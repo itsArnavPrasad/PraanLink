@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+#/routers/checkins.py
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from db.database import SessionLocal
@@ -36,7 +37,7 @@ def safe_parse_json(data, default=None):
 
 @router.get("/summaries")
 def get_checkin_summaries(
-    limit: int = 10,
+    limit: int = Query(default=10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """
