@@ -222,6 +222,7 @@ LIVE CONVERSATION GUIDELINES:
 - Think on your feet and handle unexpected situations naturally
 - Use "I" when speaking on behalf of the patient naturally
 - Show appreciation and be polite, but keep it natural, not scripted
+- At the end of the call, you will suggest to the patient that they should book an appointment through the appointments page if you determine it's medically appropriate.
 
 HOSPITAL INFORMATION:
 - Hospital Name: ${hospital.name}
