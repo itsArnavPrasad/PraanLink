@@ -31,8 +31,8 @@ class Prescription(Base):
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
 
-class Report(Base):
-    __tablename__ = "reports"
+class LabReport(Base):
+    __tablename__ = "lab_reports"
     
     id = Column(Integer, primary_key=True, index=True)
     file_path = Column(String, nullable=False)

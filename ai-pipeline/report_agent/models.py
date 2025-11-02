@@ -57,6 +57,7 @@ class PossibleConditions(BaseModel):
 
 # ---------- Conversation Summarizer output ----------
 class ConversationSummary(BaseModel):
+    date: Optional[str] = None              # Date of the conversation (for chronological weighting)
     mood: Optional[str] = None
     symptoms: List[str] = []
     medications_taken: List[str] = []
@@ -68,6 +69,23 @@ class ConversationSummary(BaseModel):
     overall_score: Optional[str] = None
 
 
+# ---------- Medication Aggregator output ----------
+class Medication(BaseModel):
+    name: str                                # Medication name
+    dosage: Optional[str] = None            # e.g., "5mg", "75mg"
+    frequency: Optional[str] = None          # e.g., "once daily", "twice daily"
+    duration: Optional[str] = None          # e.g., "30 days", "ongoing"
+    start_date: Optional[str] = None        # When medication was started
+    end_date: Optional[str] = None          # When medication was stopped (if applicable)
+    special_instructions: Optional[str] = None
+    source: Optional[str] = None            # "prescription" or "conversation_summary"
+
+class MedicationOverview(BaseModel):
+    current_medications: List[Medication] = []       # Active medications
+    past_medications: List[Medication] = []          # Discontinued medications
+    medication_timeline: List[Medication] = []        # Chronological list of all medications
+    medication_summary: Optional[str] = None          # Summary of medication history
+
 
 # ---------- Final aggregated medical report ----------
 class FinalReport(BaseModel):
@@ -78,10 +96,17 @@ class FinalReport(BaseModel):
 
 
 # ---------- Final aggregated health report ----------
+# This schema aggregates outputs from all sub-agents:
+# - timeline: from timeline_builder_agent (output_key: "timeline")
+# - clinical_trends: from clinical_trend_analyzer_agent (output_key: "clinical_trends")
+# - risk_and_severity: from risk_and_severity_agent (output_key: "risk_and_severity")
+# - possible_conditions: from disease_inference_agent (output_key: "possible_conditions")
+# - medication_overview: from medication_aggregator_agent (output_key: "medication_overview")
+# - final_report: from patient_report_generator_agent (output_key: "final_report")
 class PatientHealthReport(BaseModel):
-    timeline: Timeline = Timeline()
-    clinical_trends: ClinicalTrends = ClinicalTrends()
-    risk_and_severity: RiskAndSeverity = RiskAndSeverity(overall_health_index=0.0, overall_severity="Low")
-    possible_conditions: PossibleConditions = PossibleConditions()
-    conversation_summary: ConversationSummary = ConversationSummary()
-    final_report: FinalReport = FinalReport(patient_overview="", risk_level="Low", next_steps=[])
+    timeline: Timeline                          # Chronological medical events
+    clinical_trends: ClinicalTrends            # Lab metric trends and changes
+    risk_and_severity: RiskAndSeverity          # Disease risks and severity assessment
+    possible_conditions: PossibleConditions    # Inferred conditions with confidence
+    medication_overview: MedicationOverview     # Current and past medications
+    final_report: FinalReport                   # Comprehensive patient health report
