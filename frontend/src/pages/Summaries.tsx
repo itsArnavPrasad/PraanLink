@@ -477,34 +477,12 @@ export default function Summaries() {
                       </div>
                     )}
 
-                    {report.key_findings && report.key_findings.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
-                          <TrendingUp className="h-4 w-4 text-blue-500" />
-                          Key Findings
-                        </h4>
-                        <div className="space-y-2">
-                          {report.key_findings.map((finding, idx) => (
-                            <div key={idx} className="p-3 rounded-lg bg-blue-500/10">
-                              <p className="font-medium text-sm text-foreground">{finding.metric}</p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Value: {finding.value}
-                              </p>
-                              {finding.interpretation && (
-                                <p className="text-xs text-muted-foreground mt-1">{finding.interpretation}</p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     {report.analyzed_metrics && report.analyzed_metrics.length > 0 && (
                       <div className="mb-4">
                         <h4 className="mb-3 text-sm font-medium text-foreground">Test Results</h4>
                         <div className="space-y-2">
-                          {report.analyzed_metrics.slice(0, 5).map((metric, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-2 rounded bg-muted/50">
+                          {report.analyzed_metrics.slice(0, 100).map((metric, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-2 rounded bg-blue-500/10">
                               <div className="flex-1">
                                 <p className="text-sm font-medium text-foreground">{metric.test_name}</p>
                                 <p className="text-xs text-muted-foreground">{metric.reference_range}</p>
@@ -517,9 +495,9 @@ export default function Summaries() {
                               </div>
                             </div>
                           ))}
-                          {report.analyzed_metrics.length > 5 && (
+                          {report.analyzed_metrics.length > 100 && (
                             <p className="text-xs text-center text-muted-foreground pt-2">
-                              +{report.analyzed_metrics.length - 5} more tests
+                              +{report.analyzed_metrics.length - 100} more tests
                             </p>
                           )}
                         </div>
