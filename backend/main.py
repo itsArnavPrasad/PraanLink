@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from marshmallow import ValidationError as MarshmallowValidationError
 import os
-from routers import checkins, prescriptions, reports, hospitals, insurances
+from contextlib import asynccontextmanager
+from routers import checkins, prescriptions, reports, hospitals, insurances, appointments
 from db.database import init_db, SessionLocal
 from db.models import CheckIn, Prescription, Report, OverallReport
 from sqlalchemy import desc
@@ -16,10 +17,23 @@ from utils.summarize import summarize_checkin_text
 from utils.ocr_summary import process_prescription, process_lab_report
 from utils.overall_report import process_overall_report
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    try:
+        init_db()
+        print("Database initialized successfully")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+    yield
+    # Shutdown (if needed)
+    pass
+
 app = FastAPI(
     title="PraanLink API",
     description="Backend API for PraanLink - Your Proactive Health Companion",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS Configuration
@@ -51,15 +65,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# Initialize database
-@app.on_event("startup")
-async def startup_event():
-    try:
-        init_db()
-        print("Database initialized successfully")
-    except Exception as e:
-        print(f"Database initialization error: {e}")
 
 # Serve PDF files endpoint - must be before routers to avoid conflicts
 @app.get("/uploads/{file_path:path}")
@@ -129,6 +134,7 @@ app.include_router(prescriptions.router)
 app.include_router(reports.router)
 app.include_router(hospitals.router)
 app.include_router(insurances.router)
+app.include_router(appointments.router)
 
 # Root endpoint
 @app.get("/")

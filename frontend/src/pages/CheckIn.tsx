@@ -27,7 +27,7 @@ export default function CheckIn() {
   const initializedRef = useRef(false);
 
   // Replace with your actual API key
-  const API_KEY = 'AIzaSyDTlWT_cb90s0CbMFnTptjUqH-yNfLzxqg';
+  const API_KEY = 'AIzaSyBOZvLU8kGhhY_d7dVeO63bucV1RNKJbVU';
   const endpoint = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${API_KEY}`;
 
   // Replace with your backend URL

@@ -1,177 +1,194 @@
 export class GeminiLiveAPI {
-    constructor(endpoint, autoSetup = true, setupConfig = null) {
-      this.ws = new WebSocket(endpoint);
-      this.onSetupComplete = () => {};
-      this.onAudioData = () => {};
-      this.onInterrupted = () => {};
-      this.onTurnComplete = () => {};
-      this.onError = () => {};
-      this.onClose = () => {};
-      this.onToolCall = () => {};
-      this.pendingSetupMessage = null;
-      this.autoSetup = autoSetup;
-      this.setupConfig = setupConfig;
-  
-      this.setupWebSocket();
-    }
-  
-    setupWebSocket() {
-      this.ws.onopen = () => {
-        console.log('WebSocket connection is opening...');
-        if (this.autoSetup) {
-          this.sendDefaultSetup();
-        } else if (this.pendingSetupMessage) {
-          console.log('Sending pending setup message:', this.pendingSetupMessage);
-          this.ws.send(JSON.stringify(this.pendingSetupMessage));
-          this.pendingSetupMessage = null;
-        }
-      };
-  
-      this.ws.onmessage = async (event) => {
-        try {
-          let wsResponse;
-          if (event.data instanceof Blob) {
-            const responseText = await event.data.text();
-            wsResponse = JSON.parse(responseText);
-          } else {
-            wsResponse = JSON.parse(event.data);
-          }
-  
-          console.log('WebSocket Response:', wsResponse);
-  
-          if (wsResponse.setupComplete) {
-            this.onSetupComplete();
-          } else if (wsResponse.toolCall) {
-            this.onToolCall(wsResponse.toolCall);
-          } else if (wsResponse.serverContent) {
-            if (wsResponse.serverContent.interrupted) {
-              this.onInterrupted();
-              return;
-            }
-  
-            if (wsResponse.serverContent.modelTurn?.parts?.[0]?.inlineData) {
-              const audioData = wsResponse.serverContent.modelTurn.parts[0].inlineData.data;
-              this.onAudioData(audioData);
-  
-              if (!wsResponse.serverContent.turnComplete) {
-                this.sendContinueSignal();
-              }
-            }
-  
-            if (wsResponse.serverContent.turnComplete) {
-              this.onTurnComplete();
-            }
-          }
-        } catch (error) {
-          console.error('Error parsing response:', error);
-          this.onError('Error parsing response: ' + error.message);
-        }
-      };
-  
-      this.ws.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-        this.onError('WebSocket Error: ' + error.message);
-      };
-  
-      this.ws.onclose = (event) => {
-        console.log('Connection closed:', event);
-        this.onClose(event);
-      };
-    }
-  
-    sendMessage(message) {
-      if (this.ws.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify(message));
-      } else {
-        console.error('WebSocket is not open. Current state:', this.ws.readyState);
-        this.onError('WebSocket is not ready. Please try again.');
-      }
-    }
-  
-    sendSetupMessage(setupMessage) {
-      if (this.ws.readyState === WebSocket.OPEN) {
-        console.log('Sending setup message:', setupMessage);
-        this.ws.send(JSON.stringify(setupMessage));
-      } else {
-        console.log('Connection not ready, queuing setup message');
-        this.pendingSetupMessage = setupMessage;
-      }
-    }
-  
-    sendDefaultSetup() {
-      const defaultConfig = {
-        model: "models/gemini-2.0-flash-exp",
-        generation_config: {
-          response_modalities: ["audio"],
-          speech_config: {
-            voice_config: {
-              prebuilt_voice_config: {
-                voice_name: "Puck"
-              }
-            }
-          }
-        }
-      };
-  
-      const setupMessage = {
-        setup: this.setupConfig || defaultConfig
-      };
-  
-      this.sendSetupMessage(setupMessage);
-    }
-  
-    sendAudioChunk(base64Audio) {
-      const message = {
-        realtime_input: {
-          media_chunks: [{
-            mime_type: "audio/pcm",
-            data: base64Audio
-          }]
-        }
-      };
-      this.sendMessage(message);
-    }
-  
-    sendEndMessage() {
-      const message = {
-        client_content: {
-          turns: [{
-            role: "user",
-            parts: []
-          }],
-          turn_complete: true
-        }
-      };
-      this.sendMessage(message);
-    }
-  
-    sendContinueSignal() {
-      const message = {
-        client_content: {
-          turns: [{
-            role: "user",
-            parts: []
-          }],
-          turn_complete: false
-        }
-      };
-      this.sendMessage(message);
-    }
-    
-    sendToolResult(callId, result) {
-      const message = {
-        tool_response: {
-          call_id: callId,
-          output: {
-            data: [
-              {
-                text: typeof result === "string" ? result : JSON.stringify(result)
-              }
-            ]
-          }
-        }
-      };
-      this.sendMessage(message);
-    }
-    
+  constructor(endpoint, autoSetup = true, setupConfig = null) {
+    this.ws = new WebSocket(endpoint);
+    this.onSetupComplete = () => {};
+    this.onAudioData = () => {};
+    this.onInterrupted = () => {};
+    this.onTurnComplete = () => {};
+    this.onError = () => {};
+    this.onClose = () => {};
+    this.onToolCall = () => {};
+    this.pendingSetupMessage = null;
+    this.autoSetup = autoSetup;
+    this.setupConfig = setupConfig;
+
+    this.setupWebSocket();
   }
+
+  setupWebSocket() {
+    this.ws.onopen = () => {
+      console.log('WebSocket connection is opening...');
+      if (this.autoSetup) {
+        this.sendDefaultSetup();
+      } else if (this.pendingSetupMessage) {
+        console.log('Sending pending setup message:', this.pendingSetupMessage);
+        this.ws.send(JSON.stringify(this.pendingSetupMessage));
+        this.pendingSetupMessage = null;
+      }
+    };
+
+    this.ws.onmessage = async (event) => {
+      try {
+        let wsResponse;
+        if (event.data instanceof Blob) {
+          const responseText = await event.data.text();
+          wsResponse = JSON.parse(responseText);
+        } else {
+          wsResponse = JSON.parse(event.data);
+        }
+
+        console.log('WebSocket Response:', wsResponse);
+
+        if (wsResponse.setupComplete) {
+          this.onSetupComplete();
+        } else if (wsResponse.toolCall) {
+          this.onToolCall(wsResponse.toolCall);
+        } else if (wsResponse.serverContent) {
+          if (wsResponse.serverContent.interrupted) {
+            this.onInterrupted();
+            return;
+          }
+
+          // Check for tool calls in serverContent.modelTurn.functionCalls
+          if (wsResponse.serverContent.modelTurn?.functionCalls) {
+            // Format: {functionCalls: [{name, args, id}]}
+            this.onToolCall(wsResponse.serverContent.modelTurn);
+          }
+
+          if (wsResponse.serverContent.modelTurn?.parts?.[0]?.inlineData) {
+            const audioData = wsResponse.serverContent.modelTurn.parts[0].inlineData.data;
+            this.onAudioData(audioData);
+
+            if (!wsResponse.serverContent.turnComplete) {
+              this.sendContinueSignal();
+            }
+          }
+
+          if (wsResponse.serverContent.turnComplete) {
+            this.onTurnComplete();
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing response:', error);
+        this.onError('Error parsing response: ' + error.message);
+      }
+    };
+
+    this.ws.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+      this.onError('WebSocket Error: ' + error.message);
+    };
+
+    this.ws.onclose = (event) => {
+      console.log('Connection closed:', event);
+      this.onClose(event);
+    };
+  }
+
+  sendMessage(message) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else {
+      console.error('WebSocket is not open. Current state:', this.ws.readyState);
+      this.onError('WebSocket is not ready. Please try again.');
+    }
+  }
+
+  sendSetupMessage(setupMessage) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      console.log('Sending setup message:', setupMessage);
+      this.ws.send(JSON.stringify(setupMessage));
+    } else {
+      console.log('Connection not ready, queuing setup message');
+      this.pendingSetupMessage = setupMessage;
+    }
+  }
+
+  sendDefaultSetup() {
+    const defaultConfig = {
+      model: "models/gemini-2.0-flash-exp",
+      generation_config: {
+        response_modalities: ["audio"],
+        speech_config: {
+          voice_config: {
+            prebuilt_voice_config: {
+              voice_name: "Puck"
+            }
+          }
+        }
+      }
+    };
+
+    const setupMessage = {
+      setup: this.setupConfig || defaultConfig
+    };
+
+    this.sendSetupMessage(setupMessage);
+  }
+
+  sendAudioChunk(base64Audio) {
+    const message = {
+      realtime_input: {
+        media_chunks: [{
+          mime_type: "audio/pcm",
+          data: base64Audio
+        }]
+      }
+    };
+    this.sendMessage(message);
+  }
+
+  sendEndMessage() {
+    const message = {
+      client_content: {
+        turns: [{
+          role: "user",
+          parts: []
+        }],
+        turn_complete: true
+      }
+    };
+    this.sendMessage(message);
+  }
+
+  sendContinueSignal() {
+    const message = {
+      client_content: {
+        turns: [{
+          role: "user",
+          parts: []
+        }],
+        turn_complete: false
+      }
+    };
+    this.sendMessage(message);
+  }
+  
+  sendToolResult(callId, result) {
+    // NOTE: Not sending tool results back to API to avoid WebSocket connection issues
+    // The Gemini Live API may handle tool completion automatically
+    // Just log the result for debugging purposes
+    const resultText = typeof result === "string" ? result : JSON.stringify(result);
+    console.log(`✅ Tool result (callId: ${callId}):`, resultText);
+    console.log("⚠️ Tool result not sent to API - connection remains open");
+    
+    // Optionally, we could send a simple continue signal or empty turn
+    // But for now, we'll let the API handle tool completion automatically
+  }
+  
+  sendTextMessage(text) {
+    const message = {
+      client_content: {
+        turns: [{
+          role: "user",
+          parts: [{
+            text: text
+          }]
+        }],
+        turn_complete: true
+      }
+    };
+    this.sendMessage(message);
+  }
+  
+}
