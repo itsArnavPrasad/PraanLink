@@ -100,6 +100,46 @@ class Report(Base):
     
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
+class OverallReport(Base):
+    __tablename__ = "overall_reports"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    pdf_file_path = Column(String, nullable=True)
+    
+    # Timeline section
+    # Structure: {events: [{date, event_type, description, source}]}
+    timeline = Column(JSON, nullable=True)
+    
+    # Clinical trends section
+    # Structure: {trends: [{metric, previous_value, current_value, trend, status, clinical_comment}], overall_summary}
+    clinical_trends = Column(JSON, nullable=True)
+    
+    # Risk and severity section
+    # Structure: {disease_risks: [{disease, risk_score, severity_level}], overall_health_index, overall_severity, clinical_comment}
+    risk_and_severity = Column(JSON, nullable=True)
+    overall_health_index = Column(Float, nullable=True)
+    overall_severity = Column(String, nullable=True)
+    
+    # Possible conditions section
+    # Structure: {conditions: [{condition, confidence, recommended_action}], summary_comment}
+    possible_conditions = Column(JSON, nullable=True)
+    
+    # Medication overview section
+    # Structure: {current_medications: [], past_medications: [{name, dosage, frequency, duration, start_date, end_date, special_instructions, source}], medication_timeline: [], medication_summary}
+    medication_overview = Column(JSON, nullable=True)
+    
+    # Final report section
+    # Structure: {patient_overview, risk_level, next_steps: [], summary_comment}
+    final_report = Column(JSON, nullable=True)
+    patient_overview = Column(Text, nullable=True)
+    risk_level = Column(String, nullable=True)
+    next_steps = Column(JSON, nullable=True)
+    summary_comment = Column(Text, nullable=True)
+    
+    # Full structured data as JSON backup (entire report)
+    structured_data = Column(JSON, nullable=True)
+
 
 class Hospital(Base):
     __tablename__ = "hospitals"

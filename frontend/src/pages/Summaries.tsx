@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, TrendingUp, AlertCircle, Heart, Moon, Zap, Pill, ActivitySquare, FileText, Stethoscope, FlaskConical } from "lucide-react";
+import { Calendar, TrendingUp, AlertCircle, Heart, Moon, Zap, Pill, ActivitySquare, FileText, Stethoscope, FlaskConical, FileDown, Loader2, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 interface CheckInSummary {
   id: number;
@@ -83,12 +85,33 @@ export default function Summaries() {
   const [reports, setReports] = useState<ReportSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("checkins");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [pdfPath, setPdfPath] = useState<string | null>(null);
+  const [reportId, setReportId] = useState<number | null>(null);
 
   const BACKEND_URL = 'http://localhost:8000';
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
+  const fetchLatestOverallReport = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/latest-overall-report`);
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.pdf_file_path) {
+          setReportId(result.id);
+          // Convert backend file path to URL
+          const pdfUrl = `${BACKEND_URL}/${result.pdf_file_path}`;
+          setPdfPath(pdfUrl);
+        }
+      } else if (response.status !== 404) {
+        // Only log non-404 errors (404 means no report exists yet, which is fine)
+        const errorData = await response.json();
+        console.error("Error fetching latest overall report:", errorData);
+      }
+    } catch (error) {
+      console.error("Error fetching latest overall report:", error);
+    }
+  };
 
   const fetchAllData = async () => {
     try {
@@ -113,6 +136,11 @@ export default function Summaries() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAllData();
+    fetchLatestOverallReport();
+  }, []);
 
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -152,6 +180,47 @@ export default function Summaries() {
     return 'destructive';
   };
 
+  const handleGenerateOverallReport = async () => {
+    setIsGeneratingReport(true);
+    setPdfPath(null);
+    setReportId(null);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/generate-overall-report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate report');
+      }
+
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        setReportId(result.id);
+        // Convert backend file path to URL
+        // The backend stores paths like "uploads/overall_reports/OverallReport_xxx.pdf"
+        // We need to convert it to a URL the frontend can access
+        const pdfUrl = `${BACKEND_URL}/${result.pdf_file_path}`;
+        setPdfPath(pdfUrl);
+        toast.success('Overall report generated successfully!');
+        // Refresh the latest report in case we want to show updated info
+        await fetchLatestOverallReport();
+      } else {
+        throw new Error(result.message || 'Report generation failed');
+      }
+    } catch (error: any) {
+      console.error('Error generating overall report:', error);
+      toast.error(error.message || 'Failed to generate overall report');
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex h-full flex-col">
@@ -174,10 +243,44 @@ export default function Summaries() {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-border bg-card px-8 py-6">
-        <h1 className="text-3xl font-bold text-foreground">Health Summaries</h1>
-        <p className="mt-2 text-muted-foreground">
-          Your complete health history and insights
-        </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Health Summaries</h1>
+            <p className="mt-2 text-muted-foreground">
+              Your complete health history and insights
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-3">
+            <Button
+              onClick={handleGenerateOverallReport}
+              disabled={isGeneratingReport}
+              className="flex items-center gap-2"
+            >
+              {isGeneratingReport ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating Report...
+                </>
+              ) : (
+                <>
+                  <FileDown className="h-4 w-4" />
+                  Prepare Overall Report
+                </>
+              )}
+            </Button>
+            {pdfPath && (
+              <a
+                href={pdfPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                <ExternalLink className="h-4 w-4" />
+                View Generated PDF Report
+              </a>
+            )}
+          </div>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
