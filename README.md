@@ -1,8 +1,10 @@
 # PraanLink
 
-> **Empathy meets intelligence — your proactive health steward walking with you every step of the way.**
+> **🏆 Winner — Healthcare Hackathon @ IIT Bombay (organized by Loop Health)
+Empathy meets intelligence — your proactive health steward walking with you every step of the way.**
 
 PraanLink reimagines healthcare as a continuous conversation, blending empathy with intelligence. Its goal is to detect health issues before they become critical, making healthcare proactive instead of reactive.
+
 
 ---
 
