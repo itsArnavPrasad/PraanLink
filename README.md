@@ -143,14 +143,14 @@ The report generation process follows a **7-step pipeline**:
 - **Gemini Live API** + **WebSockets** for instant dialogue
 - Multilingual support with low latency
 - Contextual memory keeps conversation history relevant
-- Emotional Intelligence: conversational, compassionate tone
+- Emotional Intelligence: conversational and compassionate tone
 - Feels like a human companion, not a clinical bot
 
 ### Features
 - Real-time audio streaming (bidirectional)
 - Natural interruptions and turn-taking
 - Voice synthesis with multiple voice options
-- Tool calling capabilities for medical knowledge search and history access
+- Tool calling capabilities for medical knowledge search and history access 
 
 ---
 
